@@ -1,0 +1,17 @@
+cleaning_params:
+  envios:
+    date_cols: ["fecha_envio", "fecha_entrega"]
+    id_cols: ["id_envio", "id_ruta", "id_vehiculo"]
+    num_cols: ["peso_kg", "volumen_m3"]
+  incidencias:
+    date_cols: ["fecha"]
+    id_cols: ["id_incidencia", "id_envio"]
+    num_cols: ["costo_impacto"]
+  rutas:
+    date_cols: []
+    id_cols: ["id_ruta"]
+    num_cols: ["distancia_km", "tiempo_estimado_hrs", "peaje_total"]
+  vehiculos:
+    date_cols: []
+    id_cols: ["id_vehiculo"]
+    num_cols: ["capacidad_kg", "capacidad_m3", "año_fabricacion", "km_recorridos"]
