@@ -1,101 +1,76 @@
-# pruebaparcial1
+# Proyecto de Modelado - Parcial 2 (Ciencia de Datos)
 
-[![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
+Este repositorio contiene la implementación completa de un pipeline de Machine Learning integrado con **Kedro** para la predicción de retrasos en envíos (`es_retraso`). 
 
-## Overview
+El proyecto consta de dos partes principales:
+1. **Data Engineering (Kedro)**: Nodos para la limpieza e integración de múltiples fuentes de datos (`envios`, `incidencias`, `rutas`, `vehiculos`) en una única `master_table.parquet`.
+2. **Machine Learning (proyecto_modelado)**: Scripts y Notebooks que realizan el entrenamiento, evaluación y optimización de modelos (Random Forest y Regresión Logística) sobre la tabla maestra.
 
-This is your new Kedro project, which was generated using `kedro 1.3.0`.
+---
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+## 🚀 Cómo inicializar el proyecto
 
-## Rules and guidelines
+Para asegurar la reproducibilidad y evitar problemas de compatibilidad (como el `KedroPythonVersionWarning`), el proyecto debe ejecutarse estrictamente con **Python 3.10.6**.
 
-In order to get the best out of the template:
-
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a data engineering convention
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
-
-## How to install dependencies
-
-Declare any dependencies in `requirements.txt` for `pip` installation.
-
-To install them, run:
-
-```
-pip install -r requirements.txt
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/k3na1/Parcial2_CDD.git
+cd Parcial2_CDD
 ```
 
-## How to run your Kedro pipeline
-
-You can run your Kedro project with:
-
+### 2. Crear y activar el entorno virtual
+Es altamente recomendable utilizar `uv` para la gestión del entorno:
+```bash
+uv venv --python 3.10.6
+# En Windows:
+.venv\Scripts\activate
+# En Mac/Linux:
+source .venv/bin/activate
 ```
+
+### 3. Instalar las dependencias
+Todas las dependencias necesarias para Kedro y Scikit-Learn están listadas.
+```bash
+uv pip install -e .
+uv pip install pandas numpy scikit-learn matplotlib seaborn joblib pyarrow fastparquet
+```
+*(También puedes usar `pip install` tradicional si no utilizas `uv`).*
+
+---
+
+## ⚙️ Generación de Datos (Kedro Run)
+
+Antes de entrenar los modelos, necesitas generar la tabla maestra procesada. Ejecuta el pipeline de Kedro:
+
+```bash
 kedro run
 ```
+Esto procesará los CSV en crudo y generará el archivo `data/03_primary/master_table.parquet`.
 
-## How to test your Kedro project
+---
 
-Have a look at the file `tests/test_run.py` for instructions on how to write your tests. You can run your tests as follows:
+## 🧠 ¿Cómo ver lo que se hizo en la Parcial 2 (Machine Learning)?
 
+Todo el código de modelado se estructuró dentro de la carpeta `proyecto_modelado/`.
+
+### Opción A: Explorar los Jupyter Notebooks
+Se ha construido un flujo de análisis en 5 cuadernos que debes ejecutar de forma secuencial. Puedes abrirlos usando VS Code o lanzando Jupyter Lab:
+```bash
+jupyter lab
 ```
-pytest
-```
+Dirígete a `proyecto_modelado/notebooks/` y revisa:
+1. **`01_exploratory_analysis.ipynb`**: Análisis descriptivo y distribuciones de `es_retraso`.
+2. **`02_supervised_modeling.ipynb`**: Separación de datos (entrenamiento/prueba) y ajuste de modelos base.
+3. **`03_model_evaluation.ipynb`**: Métricas de rendimiento, Curva ROC y Matrices de Confusión.
+4. **`04_hyperparameter_optimization.ipynb`**: Tuning de hiperparámetros con `GridSearchCV` para Random Forest.
+5. **`05_final_analysis.ipynb`**: Análisis de importancia de variables (*Feature Importance*) y conclusiones.
 
-You can configure the coverage threshold in your project's `pyproject.toml` file under the `[tool.coverage.report]` section.
+### Opción B: Explorar los Scripts (Archivos `.py`)
+El código fuente utilizado por los notebooks se encuentra modularizado en `proyecto_modelado/src/`:
+- `data_preprocessing.py`: Carga y escalado de datos con `StandardScaler`.
+- `model_training.py`: Instanciación y entrenamiento de modelos.
+- `model_evaluation.py`: Generación de gráficos y métricas.
+- `hyperparameter_tuning.py`: Lógica de optimización.
 
-
-## Project dependencies
-
-To see and update the dependency requirements for your project use `requirements.txt`. You can install the project requirements with `pip install -r requirements.txt`.
-
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
-
-## How to work with Kedro and notebooks
-
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `context`, 'session', `catalog`, and `pipelines`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
-
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
-
-```
-pip install jupyter
-```
-
-After installing Jupyter, you can start a local notebook server:
-
-```
-kedro jupyter notebook
-```
-
-### JupyterLab
-To use JupyterLab, you need to install it:
-
-```
-pip install jupyterlab
-```
-
-You can also start JupyterLab:
-
-```
-kedro jupyter lab
-```
-
-### IPython
-And if you want to run an IPython session:
-
-```
-kedro ipython
-```
-
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
-
-> *Note:* Your output cells will be retained locally.
-
-## Package your Kedro project
-
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/deploy/package_a_project/#package-an-entire-kedro-project)
+### Opción C: Informe Técnico Final
+Para leer el resumen metodológico y las conclusiones de todo este proceso experimental, dirígete al archivo **[`proyecto_modelado/informe_tecnico.md`](proyecto_modelado/informe_tecnico.md)**.
